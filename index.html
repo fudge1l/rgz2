@@ -81,8 +81,8 @@
             outputElement.textContent = "Запуск...";
 
             try {
-                // Отправляем POST-запрос к нашему прокси-серверу
-                const response = await fetch("http://localhost:3000/proxy", {
+                // Отправляем POST-запрос к вашему серверу на Render
+                const response = await fetch("https://your-app-name.onrender.com/proxy", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
@@ -96,16 +96,18 @@
                     })
                 });
 
-                // Парсим результат
-                const result = await response.json();
-
-                // Выводим результат выполнения
-                if (result.output) {
-                    outputElement.textContent = result.output;
-                } else if (result.error) {
-                    outputElement.textContent = "Ошибка:\n" + result.error;
+                // Проверка успешного ответа
+                if (response.ok) {
+                    const result = await response.json();
+                    if (result.output) {
+                        outputElement.textContent = result.output;
+                    } else if (result.error) {
+                        outputElement.textContent = "Ошибка:\n" + result.error;
+                    } else {
+                        outputElement.textContent = "Неизвестный результат.";
+                    }
                 } else {
-                    outputElement.textContent = "Неизвестный результат.";
+                    outputElement.textContent = "Ошибка при выполнении запроса!";
                 }
             } catch (error) {
                 // Обработка ошибок запроса
