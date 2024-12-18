@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Python Компилятор</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            background-color: #f9f9f9;
+        }
+
+        h1 {
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        textarea {
+            width: 80%;
+            height: 200px;
+            font-family: monospace;
+            font-size: 16px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            margin-bottom: 10px;
+            resize: none;
+        }
+
+        button {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        pre {
+            width: 80%;
+            padding: 10px;
+            background-color: #eee;
+            border: 1px solid #ddd;
+            overflow: auto;
+            white-space: pre-wrap;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Python Компилятор</h1>
+
+    <!-- Поле для ввода кода -->
+    <textarea id="code" placeholder="Напишите свой Python-код здесь...">print("Hello, World!")</textarea>
+    
+    <!-- Кнопка для запуска -->
+    <button onclick="runCode()">Запустить</button>
+
+    <!-- Поле для вывода результата -->
+    <pre id="output">Вывод появится здесь...</pre>
+
+    <script>
+        async function runCode() {
+            const clientId = "ed53ccfb58f971016c5400e717529ba7"; // Твой Client ID
+            const clientSecret = "cc6cde90c58d81626e26471533b5a95860d354589e0287dee10babf24e3ef401"; // Твой Client Secret
+
+            const code = document.getElementById("code").value; // Получаем код из текстового поля
+            const outputElement = document.getElementById("output"); // Поле для вывода результата
+
+            // Очищаем предыдущий вывод
+            outputElement.textContent = "Запуск...";
+
+            try {
+                // Отправляем POST-запрос к нашему прокси-серверу
+                const response = await fetch("http://localhost:3000/proxy", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        clientId: clientId,
+                        clientSecret: clientSecret,
+                        script: code,
+                        language: "python3",
+                        versionIndex: "3" // Указываем версию Python
+                    })
+                });
+
+                // Парсим результат
+                const result = await response.json();
+
+                // Выводим результат выполнения
+                if (result.output) {
+                    outputElement.textContent = result.output;
+                } else if (result.error) {
+                    outputElement.textContent = "Ошибка:\n" + result.error;
+                } else {
+                    outputElement.textContent = "Неизвестный результат.";
+                }
+            } catch (error) {
+                // Обработка ошибок запроса
+                outputElement.textContent = "Ошибка при выполнении запроса: " + error.message;
+            }
+        }
+    </script>
+</body>
+</html>
