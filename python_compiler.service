@@ -1,0 +1,12 @@
+[Unit]
+Description=Python Compiler Flask App
+After=network.target
+
+[Service]
+User=<ваш_пользователь>
+WorkingDirectory=/path/to/python_compiler
+ExecStart=/path/to/python_compiler/venv/bin/python app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target
